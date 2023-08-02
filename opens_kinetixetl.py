@@ -61,8 +61,8 @@ if opens_success_flag == True:
     try:
         df_opens = downloadBlobFromAzure(oj_CONTAINERNAME,oj_BLOBNAME)
         #logging.info(df_users.columns)
-        df_opens["LOAD_DATE"] = today
-        df_opens.columns = ["JOB_ID", "REQ_NUMBER","CLOSED_REASON", "COMPANY", "JOB_CREATED_DATE","JOB_NAME", "JOB_OWNER", "JOB_STAGE_TEXT", "JOB_OPEN_DATE", "JOB_STATUS","TARGET_BILLING_DATE","LOAD_DATE"]
+        df_opens["EFFECTIVE_DATE"] = today
+        df_opens.columns = ["JOB_ID", "REQ_NUMBER","CLOSED_REASON", "COMPANY", "JOB_CREATED_DATE","JOB_NAME", "JOB_OWNER", "JOB_STAGE_TEXT", "JOB_OPEN_DATE", "JOB_STATUS","TARGET_BILLING_DATE","EFFECTIVE_DATE"]
 
         for el in df_opens.columns:
             df_opens[el] = df_opens[el].fillna("")
@@ -79,7 +79,7 @@ if opens_success_flag == True:
     cursor = cnxn.cursor()
     try: 
         for index, row in df_opens.iterrows():
-            cursor.execute("""INSERT INTO [dbo].[dw_opens] ("JOB_ID", "REQ_NUMBER","CLOSED_REASON", "COMPANY", "JOB_CREATED_DATE","JOB_NAME", "JOB_OWNER", "JOB_STAGE_TEXT", "JOB_OPEN_DATE", "JOB_STATUS","TARGET_BILLING_DATE","LOAD_DATE") values(?,?,?,?,?,?,?,?,?,?,?,?)""", row.JOB_ID, row.REQ_NUMBER, row.CLOSED_REASON, row.COMPANY, row.JOB_CREATED_DATE, row.JOB_NAME, row.JOB_OWNER, row.JOB_STAGE_TEXT, row.JOB_OPEN_DATE, row.JOB_STATUS, row.TARGET_BILLING_DATE, row.LOAD_DATE)
+            cursor.execute("""INSERT INTO [dbo].[dw_opens] ("JOB_ID", "REQ_NUMBER","CLOSED_REASON", "COMPANY", "JOB_CREATED_DATE","JOB_NAME", "JOB_OWNER", "JOB_STAGE_TEXT", "JOB_OPEN_DATE", "JOB_STATUS","TARGET_BILLING_DATE","EFFECTIVE_DATE") values(?,?,?,?,?,?,?,?,?,?,?,?)""", row.JOB_ID, row.REQ_NUMBER, row.CLOSED_REASON, row.COMPANY, row.JOB_CREATED_DATE, row.JOB_NAME, row.JOB_OWNER, row.JOB_STAGE_TEXT, row.JOB_OPEN_DATE, row.JOB_STATUS, row.TARGET_BILLING_DATE, row.EFFECTIVE_DATE)
         cnxn.commit()
         cursor.close()
         logging.info("Done loading opens")

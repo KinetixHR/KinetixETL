@@ -68,7 +68,7 @@ if closes_success_flag == True:
 
         for el in df_closed.columns:
             df_closed[el] = df_closed[el].fillna("")
-            df_closed["LOAD_DATE"] = today
+            df_closed["EFFECTIVE_DATE"] = today
         logging.info("Loaded in closes from SFTP...:" + str(df_closed.shape))
     except Exception as ex:
         logging.warning("Issue loading in closes from SFTP File")
@@ -80,7 +80,7 @@ if closes_success_flag == True:
     try:
         cursor = cnxn.cursor()
         for index,row in df_closed.iterrows():
-            cursor.execute("""INSERT INTO [dbo].[dw_closes] ("JOB_ID", "ACCOUNT_MANAGER", "REQ_NUMBER", "CLOSED_DATE","CLOSED_REASON", "COMPANY", "CONTACT", "FEE_TIER", "JOB_NAME","JOB_OWNER", "JOB_STAGE_TEXT", "LEVEL", "JOB_OPEN_DATE", "PAY_GRADE","RECORD_TYPE_NAME", "REGIONAL_AREA", "SALARY_HIGH", "SALARY_LOW","JOB_STATUS","LOAD_DATE") values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""", row.JOB_ID, row.ACCOUNT_MANAGER, row.REQ_NUMBER, row.CLOSED_DATE,row.CLOSED_REASON, row.COMPANY, row.CONTACT, row.FEE_TIER, row.JOB_NAME,row.JOB_OWNER, row.JOB_STAGE_TEXT, row.LEVEL, row.JOB_OPEN_DATE, row.PAY_GRADE,row.RECORD_TYPE_NAME, row.REGIONAL_AREA, row.SALARY_HIGH, row.SALARY_LOW,row.JOB_STATUS,row.LOAD_DATE)
+            cursor.execute("""INSERT INTO [dbo].[dw_closes] ("JOB_ID", "ACCOUNT_MANAGER", "REQ_NUMBER", "CLOSED_DATE","CLOSED_REASON", "COMPANY", "CONTACT", "FEE_TIER", "JOB_NAME","JOB_OWNER", "JOB_STAGE_TEXT", "LEVEL", "JOB_OPEN_DATE", "PAY_GRADE","RECORD_TYPE_NAME", "REGIONAL_AREA", "SALARY_HIGH", "SALARY_LOW","JOB_STATUS","EFFECTIVE_DATE") values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""", row.JOB_ID, row.ACCOUNT_MANAGER, row.REQ_NUMBER, row.CLOSED_DATE,row.CLOSED_REASON, row.COMPANY, row.CONTACT, row.FEE_TIER, row.JOB_NAME,row.JOB_OWNER, row.JOB_STAGE_TEXT, row.LEVEL, row.JOB_OPEN_DATE, row.PAY_GRADE,row.RECORD_TYPE_NAME, row.REGIONAL_AREA, row.SALARY_HIGH, row.SALARY_LOW,row.JOB_STATUS,row.EFFECTIVE_DATE)
         cnxn.commit()
         cursor.close()
         logging.info("Done loading closes")

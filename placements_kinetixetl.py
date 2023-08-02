@@ -64,7 +64,7 @@ if placements_success_flag == True:
 
         for el in df_placements.columns:
             df_placements[el] = df_placements[el].fillna("")
-            df_placements["LOAD_DATE"] = today
+            df_placements["EFFECTIVE_DATE"] = today
         logging.info("Loaded in placements from SFTP...:" + str(df_placements.shape))
     except:
         logging.warning("Issue loading in placements from SFTP File")
@@ -81,11 +81,11 @@ if placements_success_flag == True:
             "BILLING_DATE", "BILLING_NOTES", "BILLING_TERM", "COMMISSIONABLE_DATE",
             "FALLOFF", "FALLOFF_REASON", "GROSS_INVOICE_AMOUNT",
             "INTERNAL_EXTERNAL", "PERSON_PLACED", "PLACEMENT", "START_DATE",
-            "PLACEMENT_RECORD_TYPE_NAME", "JOB_ID","LOAD_DATE") values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""", row.ACTUAL_INVOICE_AMOUNT, row.APPROVED_FOR_BILLING,
+            "PLACEMENT_RECORD_TYPE_NAME", "JOB_ID","EFFECTIVE_DATE") values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""", row.ACTUAL_INVOICE_AMOUNT, row.APPROVED_FOR_BILLING,
             row.BILLING_DATE, row.BILLING_NOTES, row.BILLING_TERM, row.COMMISSIONABLE_DATE,
             row.FALLOFF, row.FALLOFF_REASON, row.GROSS_INVOICE_AMOUNT,
             row.INTERNAL_EXTERNAL, row.PERSON_PLACED, row.PLACEMENT, row.START_DATE,
-            row.PLACEMENT_RECORD_TYPE_NAME, row.JOB_ID,row.LOAD_DATE)
+            row.PLACEMENT_RECORD_TYPE_NAME, row.JOB_ID,row.EFFECTIVE_DATE)
         cnxn.commit()
         cursor.close()
         logging.info("Done loading placements")
