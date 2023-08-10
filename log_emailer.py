@@ -45,7 +45,7 @@ if __name__ == "__main__":
     folder_path = "/home/azureuser/"  # Replace with the path to your log folder
     email_from = "kinetixopensprocessing@gmail.com"  # Replace with your Gmail email address
     email_to = "awhelan@kinetixhr.com"  # Replace with the recipient's email address
-    email_password = "tzbjigngrgopbjat"  # Replace with your Gmail password
+    email_password = "ttljtrsnsqlhmnrz"  # Replace with your Gmail app password
     email_subject = "Log Report for today!"
 
     log_report = search_logs_and_report(folder_path)
