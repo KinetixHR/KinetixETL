@@ -47,6 +47,7 @@ if __name__ == "__main__":
     email_to = "awhelan@kinetixhr.com"  # Replace with the recipient's email address
     email_password = "ttljtrsnsqlhmnrz"  # Replace with your Gmail app password
     email_subject = "Log Report for today!"
+    print("Set up variables!")
 
     log_report = search_logs_and_report(folder_path)
 
