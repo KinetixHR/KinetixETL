@@ -44,7 +44,7 @@ def send_email(email_from, email_to, password, subject, body):
 if __name__ == "__main__":
     folder_path = "/home/azureuser/"  # Replace with the path to your log folder
     email_from = "kinetixopensprocessing@gmail.com"  # Replace with your Gmail email address
-    email_to = "awhelan@kinetixhr.com"  # Replace with the recipient's email address
+    email_to = 'kinetixreporting@kinetixhr.com'  # Replace with the recipient's email address
     email_password = "ttljtrsnsqlhmnrz"  # Replace with your Gmail app password
     email_subject = "Log Report for today!"
     print("Set up variables!")
