@@ -1,5 +1,5 @@
 import logging
-logging.basicConfig(filename='alljobs_logging.log', level=logging.DEBUG,format='%(levelname)s %(asctime)s %(message)s')
+logging.basicConfig(filename='alljobs_logging.log', level=logging.INFO,format='%(levelname)s %(asctime)s %(message)s')
 logging.info("Starting Script.")
 
 import pandas as pd
@@ -9,6 +9,8 @@ from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
 from datetime import date
 import pyodbc
+from simple_salesforce import Salesforce
+import requests
 
 def downloadBlobFromAzure(containername_,blobname_):
     blob_client = blob_service_client.get_blob_client(container=containername_, blob=blobname_)
@@ -44,6 +46,7 @@ today_search_string = date.today().strftime('%m_%d_%Y')
 aj_CONTAINERNAME = "dataloaderexports1/landing"
 
 try: 
+    '''
     container_client=blob_service_client.get_container_client("dataloaderexports1")
     blob_list = container_client.list_blobs(name_starts_with="landing/")
     for blob in blob_list:
@@ -53,19 +56,45 @@ try:
                 aj_BLOBNAME = str(blob.name).split("/")[-1]
             else:
                 logging.warning(f"Could not find all jobs file in SFTP! + {blob}")
+    '''
+    
+    soql_statement = "SELECT Id, Client_Req_Number__c, TR1__Closed_Date__c, TR1__Closed_Reason__c, TR1__Account_Name__c, CreatedById, CreatedDate, Goals_Target__c, Job_Family__c, Name, TR1__Job_Owner__c, Job_Stage_Text__c, LastActivityDate, LastModifiedById, LastModifiedDate, TR1__Notes__c, TR1__Open_Date__c, Pipeline_Job__c, Primary_Job_Req__c, Primary_Secondary__c, Record_Type_Name__c, Recruiter_Weekly_Notes__c, TR1__Status__c FROM TR1__Job__c"
+
+
+    session = requests.Session()
+    # Setting up salesforce functionality
+    sf = Salesforce(password='Kinetix3', username='awhelan@kinetixhr.com', organizationId='00D37000000HXaI',client_id='My App',session = session) 
+
+    #generator on the results page
+    fetch_results = sf.bulk.TR1__Job__c.query_all(soql_statement, lazy_operation=True)
+
+    all_results = []
+    for list_results in fetch_results:
+        all_results.extend(list_results)
+    df_alljobs = pd.DataFrame(all_results)
+    df_alljobs = df_alljobs.drop(columns=['attributes'])
+    logging.info(df_alljobs.shape)
+    df_alljobs = df_alljobs.drop(columns = ['TR1__Notes__c'])
+    logging.info(df_alljobs.columns)
+    logging.info(f"Successfully pulled jobs from API: {df_alljobs.shape}")
+
+
+
 except Exception as ex:
-    logging.warning("Issue with loading in All Jobs from TR")
+    logging.warning("Issue with loading in All Jobs from API")
     logging.warning(ex)
     alljobs_success_flag = False
 
 
 if alljobs_success_flag == True:
     try:
-        df_alljobs = downloadBlobFromAzure(aj_CONTAINERNAME,aj_BLOBNAME)
+        #df_alljobs = downloadBlobFromAzure(aj_CONTAINERNAME,aj_BLOBNAME)
         #df_alljobs.to_csv("alljobs_raw.csv", index=False)
-        df_alljobs.drop('Notes', axis=1, inplace=True)
+        #df_alljobs.drop('Notes', axis=1, inplace=True)
+        #df_alljobs = df_alljobs.drop('Unnamed: 0',axis = 1)
         df_alljobs.columns = ["JOB_ID","CLIENT_REQ_NUMBER","CLOSED_DATE","CLOSED_REASON","COMPANY_NAME","CREATED_BY_ID","CREATED_DATE","GOALS","JOB_FAMILY","JOB_NAME","JOB_OWNER","JOB_STAGE_TEXT","LAST_ACTIVITY_DATE","LAST_MODIFIED_ID","LAST_MODIFIED_DATE","OPEN_DATE","PIPELINE_JOB","PRIMARY_JOB_REQ","PRIMARY_SECONDARY",'RECORD_TYPE_NAME','RECRUITER_WEEKLY_NOTES','STATUS']
         
+        df_alljobs["CREATED_DATE"] = pd.to_datetime(df_alljobs['CREATED_DATE'], unit='ms')
         df_alljobs["LAST_ACTIVITY_DATE"] = pd.to_datetime(df_alljobs["LAST_ACTIVITY_DATE"],errors = 'coerce')
         df_alljobs["LAST_MODIFIED_DATE"] = pd.to_datetime(df_alljobs["LAST_MODIFIED_DATE"])
         df_alljobs["OPEN_DATE"] = pd.to_datetime(df_alljobs["OPEN_DATE"])
@@ -81,9 +110,10 @@ if alljobs_success_flag == True:
         df_alljobs = df_alljobs.fillna("")
 
         logging.info(df_alljobs.head())
-        logging.info("Loaded in all jobs file from SFTP...:" + str(df_alljobs.shape))
+        logging.info("Loaded in all jobs from API and transformed columns...:" + str(df_alljobs.shape))
+        logging.info(df_alljobs.columns)
     except Exception as ex:
-        logging.warning("Issue loading in all jobs file from SFTP")
+        logging.warning("Issue loading in all jobs and transforming data from API")
         logging.warning(ex)
         alljobs_success_flag_success_flag = False
 
