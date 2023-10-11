@@ -96,7 +96,7 @@ if alljobs_success_flag == True:
         
         df_alljobs["CREATED_DATE"] = pd.to_datetime(df_alljobs['CREATED_DATE'], unit='ms')
         df_alljobs["LAST_ACTIVITY_DATE"] = pd.to_datetime(df_alljobs["LAST_ACTIVITY_DATE"],errors = 'coerce')
-        df_alljobs["LAST_MODIFIED_DATE"] = pd.to_datetime(df_alljobs["LAST_MODIFIED_DATE"])
+        df_alljobs["LAST_MODIFIED_DATE"] = pd.to_datetime(df_alljobs["LAST_MODIFIED_DATE"],units = 'ms')
         df_alljobs["OPEN_DATE"] = pd.to_datetime(df_alljobs["OPEN_DATE"])
         df_alljobs["CLOSED_DATE"] = pd.to_datetime(df_alljobs["CLOSED_DATE"],errors = 'coerce')
         df_alljobs["CREATED_DATE"] = pd.to_datetime(df_alljobs["CREATED_DATE"])

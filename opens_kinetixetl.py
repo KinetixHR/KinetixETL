@@ -100,7 +100,7 @@ if opens_success_flag == True:
         for el in df_opens.columns:
             df_opens[el] = df_opens[el].fillna("")
             #df_users["LOAD_DATE"] = today
-        df_opens["JOB_CREATED_DATE"] = pd.to_datetime(df_opens["JOB_CREATED_DATE"])
+        df_opens["JOB_CREATED_DATE"] = pd.to_datetime(df_opens["JOB_CREATED_DATE"], unit='ms')
         df_opens["JOB_CREATED_DATE"] = df_opens["JOB_CREATED_DATE"].dt.strftime('%Y-%m-%d')
         logging.info("Loaded in opens file & transformed data from API...:" + str(df_opens.shape))
     except Exception as ex:
